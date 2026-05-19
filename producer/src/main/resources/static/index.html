@@ -4,17 +4,25 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>УПД</title>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/styles.css?v=2">
 </head>
 <body>
 <main class="page">
     <header class="page-header">
         <div>
-            <p class="eyebrow">WaybillDocument</p>
             <h1>Универсальный передаточный документ</h1>
         </div>
         <div class="status" id="status">Загрузка</div>
     </header>
+
+    <section class="import-bar">
+        <form id="importForm">
+            <input id="importFile" name="file" type="file" accept=".xls" onchange="updateSelectedFileName()">
+            <button id="uploadButton" type="button">Загрузить XLS</button>
+            <span class="file-name" id="fileName">Файл не выбран</span>
+        </form>
+        <span id="importStatus"></span>
+    </section>
 
     <section class="summary">
         <div class="field">
@@ -73,6 +81,6 @@
         </div>
     </section>
 </main>
-<script src="/app.js"></script>
+<script src="/app.js?v=7"></script>
 </body>
 </html>
