@@ -19,6 +19,7 @@ import ru.waybill.models.Item;
 import ru.waybill.models.Organization;
 import ru.waybill.models.WaybillDocument;
 import ru.waybill.models.WaybillDocumentLine;
+import ru.waybill.services.WaybillDocumentStore;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +36,11 @@ public class ImportController {
     private static final int FIRST_LINE_ROW = 18;
     private static final int LAST_LINE_ROW = 22;
     private static final DataFormatter FORMATTER = new DataFormatter(Locale.forLanguageTag("ru-RU"));
+    private final WaybillDocumentStore documentStore;
+
+    public ImportController(WaybillDocumentStore documentStore) {
+        this.documentStore = documentStore;
+    }
 
     @PostMapping(value = "/api/import/waybill", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public WaybillDocument importWaybill(@RequestParam("file") MultipartFile file) throws IOException {
@@ -48,7 +54,9 @@ public class ImportController {
 
         try (InputStream input = file.getInputStream();
              Workbook workbook = WorkbookFactory.create(input)) {
-            return readDocument(workbook.getSheetAt(0));
+            WaybillDocument document = readDocument(workbook.getSheetAt(0));
+            documentStore.setDocument(document);
+            return document;
         }
     }
 
