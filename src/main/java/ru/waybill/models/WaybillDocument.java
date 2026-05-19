@@ -1,4 +1,4 @@
-package ru.waybill.document;
+package ru.waybill.models;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

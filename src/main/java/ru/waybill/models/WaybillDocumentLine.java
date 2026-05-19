@@ -1,4 +1,4 @@
-package ru.waybill.document;
+package ru.waybill.models;
 
 import java.math.BigDecimal;
 

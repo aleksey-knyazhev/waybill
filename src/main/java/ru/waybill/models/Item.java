@@ -1,4 +1,4 @@
-package ru.waybill.document;
+package ru.waybill.models;
 
 public class Item {
     private String productCode;

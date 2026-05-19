@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>УПД</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<main class="page">
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">WaybillDocument</p>
+            <h1>Универсальный передаточный документ</h1>
+        </div>
+        <div class="status" id="status">Загрузка</div>
+    </header>
+
+    <section class="summary">
+        <div class="field">
+            <span>Номер</span>
+            <strong id="invoiceNumber"></strong>
+        </div>
+        <div class="field">
+            <span>Дата</span>
+            <strong id="invoiceDate"></strong>
+        </div>
+        <div class="field">
+            <span>Валюта</span>
+            <strong id="currency"></strong>
+        </div>
+        <div class="field">
+            <span>Основание</span>
+            <strong id="transferBasis"></strong>
+        </div>
+    </section>
+
+    <section class="parties">
+        <article>
+            <h2>Продавец</h2>
+            <p id="sellerName"></p>
+            <span id="sellerInnKpp"></span>
+        </article>
+        <article>
+            <h2>Покупатель</h2>
+            <p id="buyerName"></p>
+            <span id="buyerInnKpp"></span>
+        </article>
+    </section>
+
+    <section class="table-section">
+        <div class="table-title">
+            <h2>Табличная часть</h2>
+            <strong id="total"></strong>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Код</th>
+                    <th>Номенклатура</th>
+                    <th>Ед.</th>
+                    <th>Кол-во</th>
+                    <th>Цена</th>
+                    <th>Без налога</th>
+                    <th>Налог</th>
+                    <th>С налогом</th>
+                </tr>
+                </thead>
+                <tbody id="lines"></tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>
