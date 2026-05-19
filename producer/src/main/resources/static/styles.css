@@ -63,9 +63,20 @@ h2 {
     padding: 8px 12px;
     border: 1px solid var(--line);
     background: var(--panel);
-    color: var(--muted);
     text-align: center;
-    font-size: 14px;
+}
+
+.status span {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.status strong {
+    display: block;
+    margin-top: 4px;
+    font-size: 15px;
+    font-weight: 700;
 }
 
 .summary,
