@@ -22,38 +22,8 @@ function number(value) {
 }
 
 function renderDocument(documentData) {
-    setText('status', `Статус ${documentData.status}`);
-    setText('invoiceNumber', documentData.invoiceNumber);
-    setText('invoiceDate', documentData.invoiceDate);
-    setText('currency', `${documentData.currencyName}, ${documentData.currencyCode}`);
-    setText('transferBasis', documentData.transferBasis);
-    setText('sellerName', documentData.seller?.name);
-    setText('sellerInnKpp', documentData.seller?.innKpp);
-    setText('buyerName', documentData.buyer?.name);
-    setText('buyerInnKpp', documentData.buyer?.innKpp);
-
-    const lines = documentData.lines ?? [];
-    const total = lines.reduce((sum, line) => sum + Number(line.amountWithTax ?? 0), 0);
-    setText('total', `Итого: ${money(total)}`);
-
-    const tbody = document.getElementById('lines');
-    tbody.innerHTML = '';
-
-    for (const line of lines) {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${line.lineNumber}</td>
-            <td>${line.item?.productCode ?? ''}</td>
-            <td>${line.item?.name ?? ''}</td>
-            <td>${line.item?.unitName ?? ''} (${line.item?.unitCode ?? ''})</td>
-            <td class="number">${number(line.quantity)}</td>
-            <td class="number">${money(line.unitPrice)}</td>
-            <td class="number">${money(line.amountWithoutTax)}</td>
-            <td class="number">${money(line.taxAmount)}</td>
-            <td class="number">${money(line.amountWithTax)}</td>
-        `;
-        tbody.appendChild(row);
-    }
+    renderHeader(documentData);
+    renderLines(documentData.lines ?? []);
 }
 
 async function importDocument(event) {
