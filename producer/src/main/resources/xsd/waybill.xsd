@@ -18,11 +18,11 @@
 
     <xs:complexType name="WaybillDocument">
         <xs:sequence>
-            <xs:element name="invoiceNumber" type="xs:string" minOccurs="0"/>
-            <xs:element name="invoiceDate" type="xs:date" minOccurs="0"/>
+            <xs:element name="invoiceNumber" type="xs:string"/>
+            <xs:element name="invoiceDate" type="xs:date"/>
             <xs:element name="status" type="xs:int" minOccurs="0"/>
-            <xs:element name="seller" type="tns:Organization" minOccurs="0"/>
-            <xs:element name="buyer" type="tns:Organization" minOccurs="0"/>
+            <xs:element name="seller" type="tns:Organization"/>
+            <xs:element name="buyer" type="tns:Organization"/>
             <xs:element name="currencyName" type="xs:string" minOccurs="0"/>
             <xs:element name="currencyCode" type="xs:string" minOccurs="0"/>
             <xs:element name="transferBasis" type="xs:string" minOccurs="0"/>
@@ -38,15 +38,15 @@
 
     <xs:complexType name="Organization">
         <xs:sequence>
-            <xs:element name="name" type="xs:string" minOccurs="0"/>
-            <xs:element name="innKpp" type="xs:string" minOccurs="0"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="innKpp" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="Item">
         <xs:sequence>
             <xs:element name="productCode" type="xs:string" minOccurs="0"/>
-            <xs:element name="name" type="xs:string" minOccurs="0"/>
+            <xs:element name="name" type="xs:string"/>
             <xs:element name="unitCode" type="xs:string" minOccurs="0"/>
             <xs:element name="unitName" type="xs:string" minOccurs="0"/>
         </xs:sequence>
@@ -54,9 +54,9 @@
 
     <xs:complexType name="WaybillDocumentLine">
         <xs:sequence>
-            <xs:element name="lineNumber" type="xs:int" minOccurs="0"/>
-            <xs:element name="item" type="tns:Item" minOccurs="0"/>
-            <xs:element name="quantity" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="lineNumber" type="xs:int"/>
+            <xs:element name="item" type="tns:Item"/>
+            <xs:element name="quantity" type="xs:decimal"/>
             <xs:element name="unitPrice" type="xs:decimal" minOccurs="0"/>
             <xs:element name="amountWithoutTax" type="xs:decimal" minOccurs="0"/>
             <xs:element name="taxAmount" type="xs:decimal" minOccurs="0"/>

@@ -17,6 +17,8 @@ import ru.waybill.services.WaybillDocumentStore;
 import ru.waybill.soap.GetWaybillDocumentRequest;
 import ru.waybill.soap.GetWaybillDocumentResponse;
 import ru.waybill.soap.SoapNamespaces;
+import ru.waybill.models.WaybillDocument;
+import ru.waybill.models.WaybillDocumentLine;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -41,7 +43,9 @@ public class SoapWaybillController {
     )
     public String getWaybillDocument(@RequestBody String requestBody) {
         readRequest(requestBody);
-        return envelope(marshal(GetWaybillDocumentResponse.from(documentStore.getDocument())));
+        WaybillDocument document = documentStore.getDocument();
+        validateDocument(document);
+        return envelope(marshal(GetWaybillDocumentResponse.from(document)));
     }
 
     private void readRequest(String requestBody) {
@@ -103,6 +107,38 @@ public class SoapWaybillController {
                     </soap:Body>
                 </soap:Envelope>
                 """.formatted(SoapNamespaces.SOAP_ENVELOPE, body);
+    }
+
+    private void validateDocument(WaybillDocument document) {
+        if (isBlank(document.getInvoiceNumber())
+                || document.getInvoiceDate() == null
+                || document.getSeller() == null
+                || isBlank(document.getSeller().getName())
+                || isBlank(document.getSeller().getInnKpp())
+                || document.getBuyer() == null
+                || isBlank(document.getBuyer().getName())
+                || isBlank(document.getBuyer().getInnKpp())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "WaybillDocument is not ready: required fields are missing"
+            );
+        }
+
+        for (WaybillDocumentLine line : document.getLines()) {
+            if (line.getLineNumber() == null
+                    || line.getItem() == null
+                    || isBlank(line.getItem().getName())
+                    || line.getQuantity() == null) {
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        "WaybillDocument is not ready: required line fields are missing"
+                );
+            }
+        }
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 
     private String stripByteOrderMark(String value) {
