@@ -4,6 +4,7 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,17 +24,21 @@ import ru.waybill.models.WaybillDocumentLine;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 public class SoapWaybillController {
     private final WaybillDocumentStore documentStore;
     private final JAXBContext jaxbContext;
+    private final String envelopeTemplate;
 
-    public SoapWaybillController(WaybillDocumentStore documentStore) throws JAXBException {
+    public SoapWaybillController(WaybillDocumentStore documentStore) throws JAXBException, IOException {
         this.documentStore = documentStore;
         this.jaxbContext = JAXBContext.newInstance(GetWaybillDocumentRequest.class, GetWaybillDocumentResponse.class);
+        this.envelopeTemplate = loadEnvelopeTemplate();
     }
 
     @PostMapping(
@@ -99,14 +104,15 @@ public class SoapWaybillController {
     }
 
     private String envelope(String body) {
-        return """
-                <?xml version="1.0" encoding="UTF-8"?>
-                <soap:Envelope xmlns:soap="%s">
-                    <soap:Body>
-                        %s
-                    </soap:Body>
-                </soap:Envelope>
-                """.formatted(SoapNamespaces.SOAP_ENVELOPE, body);
+        return envelopeTemplate
+                .replace("${soapEnvelopeNamespace}", SoapNamespaces.SOAP_ENVELOPE)
+                .replace("${body}", body);
+    }
+
+    private String loadEnvelopeTemplate() throws IOException {
+        try (InputStream inputStream = new ClassPathResource("soap/waybill-envelope.xml").getInputStream()) {
+            return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        }
     }
 
     private void validateDocument(WaybillDocument document) {
