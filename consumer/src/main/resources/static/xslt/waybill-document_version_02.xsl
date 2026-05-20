@@ -32,6 +32,29 @@
                     font-weight: 700;
                 }
 
+                .style-switcher {
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-end;
+                    gap: 10px;
+                    margin-bottom: 18px;
+                }
+
+                .style-switcher label {
+                    color: #4b635f;
+                    font-weight: 700;
+                }
+
+                .style-switcher select {
+                    min-width: 220px;
+                    padding: 8px 10px;
+                    color: #263238;
+                    background: #fffdf8;
+                    border: 1px solid #8fc3b7;
+                    border-radius: 6px;
+                    font: inherit;
+                }
+
                 h2 {
                     margin: 0 0 12px;
                     color: #1d6f5f;
@@ -98,6 +121,11 @@
                         padding: 20px 12px;
                     }
 
+                    .style-switcher {
+                        align-items: stretch;
+                        flex-direction: column;
+                    }
+
                     dl,
                     .organizations {
                         grid-template-columns: 1fr;
@@ -113,6 +141,13 @@
         <body>
         <xsl:variable name="document" select="/soap:Envelope/soap:Body/w:getWaybillDocumentResponse/w:waybillDocument"/>
         <main>
+            <div class="style-switcher">
+                <label for="xslt-version">XSLT файл</label>
+                <select id="xslt-version" onchange="window.location.href='/import/waybill-document?xslt=' + this.value">
+                    <option value="01">waybill-document_version_01.xsl</option>
+                    <option value="02" selected="selected">waybill-document_version_02.xsl</option>
+                </select>
+            </div>
             <h1>Waybill document</h1>
 
             <section>
