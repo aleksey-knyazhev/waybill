@@ -1,0 +1,21 @@
+package ru.waybill.consumer.controllers;
+
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import ru.waybill.consumer.services.SoapClient;
+import ru.waybill.consumer.soap.generated.WaybillDocument;
+
+@RestController
+public class ImportController {
+    private final SoapClient soapClient;
+
+    public ImportController(SoapClient soapClient) {
+        this.soapClient = soapClient;
+    }
+
+    @GetMapping(value = "/api/xsd/waybill-document", produces = MediaType.APPLICATION_JSON_VALUE)
+    public WaybillDocument getWaybillDocument() {
+        return soapClient.getWaybillDocumentObject();
+    }
+}

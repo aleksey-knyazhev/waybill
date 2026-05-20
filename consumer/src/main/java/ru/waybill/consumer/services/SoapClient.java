@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.waybill.consumer.soap.generated.GetWaybillDocumentRequest;
 import ru.waybill.consumer.soap.generated.GetWaybillDocumentResponse;
+import ru.waybill.consumer.soap.generated.WaybillDocument;
 import ru.waybill.consumer.soap.generated.WaybillPortType;
 import ru.waybill.consumer.soap.generated.WaybillService;
 
@@ -29,8 +30,16 @@ public class SoapClient {
     }
 
     public String getWaybillDocument() {
-        GetWaybillDocumentResponse response = waybillPort.getWaybillDocument(new GetWaybillDocumentRequest());
+        GetWaybillDocumentResponse response = getWaybillDocumentResponse();
         return envelope(marshal(response));
+    }
+
+    public WaybillDocument getWaybillDocumentObject() {
+        return getWaybillDocumentResponse().getWaybillDocument();
+    }
+
+    private GetWaybillDocumentResponse getWaybillDocumentResponse() {
+        return waybillPort.getWaybillDocument(new GetWaybillDocumentRequest());
     }
 
     private String marshal(GetWaybillDocumentResponse response) {
