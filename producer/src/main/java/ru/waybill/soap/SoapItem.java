@@ -3,9 +3,13 @@ package ru.waybill.soap;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import ru.waybill.models.Item;
 
 @XmlAccessorType(XmlAccessType.FIELD)
+@NoArgsConstructor
+@AllArgsConstructor
 public class SoapItem {
     @XmlElement(namespace = SoapNamespaces.WAYBILL)
     private String productCode;
@@ -24,11 +28,11 @@ public class SoapItem {
             return null;
         }
 
-        SoapItem result = new SoapItem();
-        result.productCode = item.getProductCode();
-        result.name = item.getName();
-        result.unitCode = item.getUnitCode();
-        result.unitName = item.getUnitName();
-        return result;
+        return new SoapItem(
+                item.getProductCode(),
+                item.getName(),
+                item.getUnitCode(),
+                item.getUnitName()
+        );
     }
 }

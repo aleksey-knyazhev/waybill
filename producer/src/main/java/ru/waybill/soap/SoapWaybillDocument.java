@@ -4,12 +4,16 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import ru.waybill.models.WaybillDocument;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
+@NoArgsConstructor
+@AllArgsConstructor
 public class SoapWaybillDocument {
     @XmlElement(namespace = SoapNamespaces.WAYBILL)
     private String invoiceNumber;
@@ -40,18 +44,18 @@ public class SoapWaybillDocument {
     private List<SoapWaybillDocumentLine> lines = new ArrayList<>();
 
     public static SoapWaybillDocument from(WaybillDocument document) {
-        SoapWaybillDocument result = new SoapWaybillDocument();
-        result.invoiceNumber = document.getInvoiceNumber();
-        result.invoiceDate = document.getInvoiceDate() == null ? null : document.getInvoiceDate().toString();
-        result.status = document.getStatus();
-        result.seller = SoapOrganization.from(document.getSeller());
-        result.buyer = SoapOrganization.from(document.getBuyer());
-        result.currencyName = document.getCurrencyName();
-        result.currencyCode = document.getCurrencyCode();
-        result.transferBasis = document.getTransferBasis();
-        result.lines = document.getLines().stream()
-                .map(SoapWaybillDocumentLine::from)
-                .toList();
-        return result;
+        return new SoapWaybillDocument(
+                document.getInvoiceNumber(),
+                document.getInvoiceDate() == null ? null : document.getInvoiceDate().toString(),
+                document.getStatus(),
+                SoapOrganization.from(document.getSeller()),
+                SoapOrganization.from(document.getBuyer()),
+                document.getCurrencyName(),
+                document.getCurrencyCode(),
+                document.getTransferBasis(),
+                document.getLines().stream()
+                        .map(SoapWaybillDocumentLine::from)
+                        .toList()
+        );
     }
 }
