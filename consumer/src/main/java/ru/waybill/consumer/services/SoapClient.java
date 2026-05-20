@@ -1,163 +1,71 @@
 package ru.waybill.consumer.services;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.ws.BindingProvider;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import ru.waybill.consumer.soap.generated.GetWaybillDocumentRequest;
+import ru.waybill.consumer.soap.generated.GetWaybillDocumentResponse;
+import ru.waybill.consumer.soap.generated.WaybillPortType;
+import ru.waybill.consumer.soap.generated.WaybillService;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 @Service
 public class SoapClient {
-    private static final String SOAP_NAMESPACE = "http://schemas.xmlsoap.org/soap/envelope/";
-    private static final String WSDL_SOAP_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/soap/";
-    private static final String XSD_NAMESPACE = "http://www.w3.org/2001/XMLSchema";
-    private static final String REQUEST_BODY = """
-            <?xml version="1.0" encoding="UTF-8"?>
-            <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                              xmlns:way="http://waybill.ru/soap">
-                <soapenv:Header/>
-                <soapenv:Body>
-                    <way:getWaybillDocumentRequest/>
-                </soapenv:Body>
-            </soapenv:Envelope>
-            """;
+    private static final String SOAP_ENVELOPE_NAMESPACE = "http://schemas.xmlsoap.org/soap/envelope/";
 
-    private final RestClient restClient;
-    private final String wsdlUrl;
-    private volatile SoapContract soapContract;
-    private volatile Schema waybillSchema;
+    private final WaybillPortType waybillPort;
 
-    public SoapClient(
-            @Value("${producer.soap.wsdl-url}") String wsdlUrl
-    ) {
-        this.restClient = RestClient.create();
-        this.wsdlUrl = wsdlUrl;
+    public SoapClient(@Value("${producer.soap.wsdl-url}") String wsdlUrl) throws MalformedURLException {
+        WaybillService service = new WaybillService(new URL(wsdlUrl));
+        this.waybillPort = service.getWaybillPort();
+        ((BindingProvider) waybillPort).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, serviceEndpoint(wsdlUrl));
     }
 
     public String getWaybillDocument() {
-        SoapContract contract = contract();
-        validatePayload(REQUEST_BODY);
-
-        String response = restClient.post()
-                .uri(contract.serviceLocation())
-                .contentType(MediaType.TEXT_XML)
-                .accept(MediaType.TEXT_XML)
-                .header("SOAPAction", contract.soapAction())
-                .body(REQUEST_BODY)
-                .retrieve()
-                .body(String.class);
-
-        validatePayload(response);
-        return response;
+        GetWaybillDocumentResponse response = waybillPort.getWaybillDocument(new GetWaybillDocumentRequest());
+        return envelope(marshal(response));
     }
 
-    private SoapContract contract() {
-        SoapContract current = soapContract;
-        if (current != null) {
-            return current;
-        }
-
-        String wsdl = restClient.get()
-                .uri(wsdlUrl)
-                .accept(MediaType.TEXT_XML)
-                .retrieve()
-                .body(String.class);
-        SoapContract parsed = parseWsdl(wsdl);
-        soapContract = parsed;
-        return parsed;
-    }
-
-    private SoapContract parseWsdl(String wsdl) {
-        Document document = parseXml(wsdl);
-        String serviceLocation = attribute(document, WSDL_SOAP_NAMESPACE, "address", "location");
-        String soapAction = attribute(document, WSDL_SOAP_NAMESPACE, "operation", "soapAction");
-        String xsdLocation = attribute(document, XSD_NAMESPACE, "import", "schemaLocation");
-        return new SoapContract(serviceLocation, soapAction, xsdLocation);
-    }
-
-    private void validatePayload(String soapEnvelope) {
+    private String marshal(GetWaybillDocumentResponse response) {
         try {
-            Schema schema = schema();
-            Node payload = payload(soapEnvelope);
-            schema.newValidator().validate(new DOMSource(payload));
-        } catch (SAXException | IOException exception) {
-            throw new IllegalStateException("SOAP payload does not match producer XSD", exception);
+            JAXBContext context = JAXBContext.newInstance(GetWaybillDocumentResponse.class);
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+
+            StringWriter writer = new StringWriter();
+            marshaller.marshal(response, writer);
+            return writer.toString();
+        } catch (JAXBException exception) {
+            throw new IllegalStateException("Cannot marshal SOAP response", exception);
         }
     }
 
-    private Schema schema() throws SAXException {
-        Schema current = waybillSchema;
-        if (current != null) {
-            return current;
-        }
-
-        String xsd = restClient.get()
-                .uri(contract().xsdLocation())
-                .accept(MediaType.APPLICATION_XML)
-                .retrieve()
-                .body(String.class);
-        Schema parsed = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
-                .newSchema(new StreamSource(new StringReader(xsd)));
-        waybillSchema = parsed;
-        return parsed;
+    private String envelope(String body) {
+        return """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <soap:Envelope xmlns:soap="%s">
+                    <soap:Body>
+                        %s
+                    </soap:Body>
+                </soap:Envelope>
+                """.formatted(SOAP_ENVELOPE_NAMESPACE, body);
     }
 
-    private Node payload(String soapEnvelope) {
-        Document document = parseXml(soapEnvelope);
-        Node body = document.getElementsByTagNameNS(SOAP_NAMESPACE, "Body").item(0);
-        if (body == null) {
-            throw new IllegalStateException("SOAP Body is missing");
+    private String serviceEndpoint(String wsdlUrl) {
+        int queryIndex = wsdlUrl.indexOf('?');
+        if (queryIndex >= 0) {
+            return wsdlUrl.substring(0, queryIndex);
         }
-
-        for (int index = 0; index < body.getChildNodes().getLength(); index++) {
-            Node node = body.getChildNodes().item(index);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                return node;
-            }
+        if (wsdlUrl.endsWith(".wsdl")) {
+            return wsdlUrl.substring(0, wsdlUrl.length() - ".wsdl".length());
         }
-        throw new IllegalStateException("SOAP payload is missing");
-    }
-
-    private String attribute(Document document, String namespace, String elementName, String attributeName) {
-        Node node = document.getElementsByTagNameNS(namespace, elementName).item(0);
-        if (node == null || node.getAttributes().getNamedItem(attributeName) == null) {
-            throw new IllegalStateException("WSDL is missing " + elementName + " " + attributeName);
-        }
-        return node.getAttributes().getNamedItem(attributeName).getNodeValue();
-    }
-
-    private Document parseXml(String xml) {
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            disableExternalEntities(factory);
-            return factory.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
-        } catch (Exception exception) {
-            throw new IllegalStateException("Cannot parse SOAP metadata XML", exception);
-        }
-    }
-
-    private void disableExternalEntities(DocumentBuilderFactory factory) throws ParserConfigurationException {
-        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        factory.setXIncludeAware(false);
-        factory.setExpandEntityReferences(false);
-    }
-
-    private record SoapContract(String serviceLocation, String soapAction, String xsdLocation) {
+        return wsdlUrl;
     }
 }
