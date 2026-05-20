@@ -6,10 +6,10 @@ import ru.waybill.producer.models.WaybillDocument;
 import ru.waybill.producer.services.WaybillDocumentStore;
 
 @RestController
-public class WaybillDocumentController {
+public class DocumentController {
     private final WaybillDocumentStore documentStore;
 
-    public WaybillDocumentController(WaybillDocumentStore documentStore) {
+    public DocumentController(WaybillDocumentStore documentStore) {
         this.documentStore = documentStore;
     }
 

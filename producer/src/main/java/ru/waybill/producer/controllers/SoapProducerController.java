@@ -33,14 +33,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 @RestController
-public class SoapWaybillController {
+public class SoapProducerController {
     private final WaybillDocumentStore documentStore;
     private final WaybillSoapMapper waybillSoapMapper;
     private final Validator validator;
     private final JAXBContext jaxbContext;
     private final String envelopeTemplate;
 
-    public SoapWaybillController(
+    public SoapProducerController(
             WaybillDocumentStore documentStore,
             WaybillSoapMapper waybillSoapMapper,
             Validator validator

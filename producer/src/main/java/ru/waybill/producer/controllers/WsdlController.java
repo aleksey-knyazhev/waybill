@@ -11,11 +11,11 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 @RestController
-public class WaybillWsdlController {
+public class WsdlController {
     private final String wsdlTemplate;
     private final String xsd;
 
-    public WaybillWsdlController() throws IOException {
+    public WsdlController() throws IOException {
         this.wsdlTemplate = loadResource("wsdl/waybill.wsdl");
         this.xsd = loadResource("xsd/waybill.xsd");
     }
