@@ -4,6 +4,8 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,7 +17,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import ru.waybill.models.WaybillDocument;
-import ru.waybill.models.WaybillDocumentLine;
 import ru.waybill.services.WaybillDocumentStore;
 import ru.waybill.soap.GetWaybillDocumentRequest;
 import ru.waybill.soap.GetWaybillDocumentResponse;
@@ -29,20 +30,24 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Set;
 
 @RestController
 public class SoapWaybillController {
     private final WaybillDocumentStore documentStore;
     private final WaybillSoapMapper waybillSoapMapper;
+    private final Validator validator;
     private final JAXBContext jaxbContext;
     private final String envelopeTemplate;
 
     public SoapWaybillController(
             WaybillDocumentStore documentStore,
-            WaybillSoapMapper waybillSoapMapper
+            WaybillSoapMapper waybillSoapMapper,
+            Validator validator
     ) throws JAXBException, IOException {
         this.documentStore = documentStore;
         this.waybillSoapMapper = waybillSoapMapper;
+        this.validator = validator;
         this.jaxbContext = JAXBContext.newInstance(GetWaybillDocumentRequest.class, GetWaybillDocumentResponse.class);
         this.envelopeTemplate = loadEnvelopeTemplate();
     }
@@ -122,35 +127,13 @@ public class SoapWaybillController {
     }
 
     private void validateDocument(WaybillDocument document) {
-        if (isBlank(document.getInvoiceNumber())
-                || document.getInvoiceDate() == null
-                || document.getSeller() == null
-                || isBlank(document.getSeller().getName())
-                || isBlank(document.getSeller().getInnKpp())
-                || document.getBuyer() == null
-                || isBlank(document.getBuyer().getName())
-                || isBlank(document.getBuyer().getInnKpp())) {
+        Set<ConstraintViolation<WaybillDocument>> violations = validator.validate(document);
+        if (!violations.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "WaybillDocument is not ready: required fields are missing"
             );
         }
-
-        for (WaybillDocumentLine line : document.getLines()) {
-            if (line.getLineNumber() == null
-                    || line.getItem() == null
-                    || isBlank(line.getItem().getName())
-                    || line.getQuantity() == null) {
-                throw new ResponseStatusException(
-                        HttpStatus.CONFLICT,
-                        "WaybillDocument is not ready: required line fields are missing"
-                );
-            }
-        }
-    }
-
-    private boolean isBlank(String value) {
-        return value == null || value.isBlank();
     }
 
     private String stripByteOrderMark(String value) {
