@@ -34,6 +34,10 @@ public class SoapClient {
         return envelope(marshal(response));
     }
 
+    public String getWaybillDocumentView() {
+        return withStylesheet(getWaybillDocument(), "/xslt/waybill-document_version_01.xsl");
+    }
+
     public WaybillDocument getWaybillDocumentObject() {
         return getWaybillDocumentResponse().getWaybillDocument();
     }
@@ -65,6 +69,13 @@ public class SoapClient {
                     </soap:Body>
                 </soap:Envelope>
                 """.formatted(SOAP_ENVELOPE_NAMESPACE, body);
+    }
+
+    private String withStylesheet(String xml, String stylesheetHref) {
+        return xml.replaceFirst(
+                "\\?>",
+                "?>\n<?xml-stylesheet type=\"text/xsl\" href=\"" + stylesheetHref + "\"?>"
+        );
     }
 
     private String serviceEndpoint(String wsdlUrl) {
