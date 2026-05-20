@@ -14,12 +14,13 @@ import org.springframework.web.server.ResponseStatusException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
+import ru.waybill.models.WaybillDocument;
+import ru.waybill.models.WaybillDocumentLine;
 import ru.waybill.services.WaybillDocumentStore;
 import ru.waybill.soap.GetWaybillDocumentRequest;
 import ru.waybill.soap.GetWaybillDocumentResponse;
 import ru.waybill.soap.SoapNamespaces;
-import ru.waybill.models.WaybillDocument;
-import ru.waybill.models.WaybillDocumentLine;
+import ru.waybill.soap.WaybillSoapMapper;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,11 +33,16 @@ import java.nio.charset.StandardCharsets;
 @RestController
 public class SoapWaybillController {
     private final WaybillDocumentStore documentStore;
+    private final WaybillSoapMapper waybillSoapMapper;
     private final JAXBContext jaxbContext;
     private final String envelopeTemplate;
 
-    public SoapWaybillController(WaybillDocumentStore documentStore) throws JAXBException, IOException {
+    public SoapWaybillController(
+            WaybillDocumentStore documentStore,
+            WaybillSoapMapper waybillSoapMapper
+    ) throws JAXBException, IOException {
         this.documentStore = documentStore;
+        this.waybillSoapMapper = waybillSoapMapper;
         this.jaxbContext = JAXBContext.newInstance(GetWaybillDocumentRequest.class, GetWaybillDocumentResponse.class);
         this.envelopeTemplate = loadEnvelopeTemplate();
     }
@@ -50,7 +56,7 @@ public class SoapWaybillController {
         readRequest(requestBody);
         WaybillDocument document = documentStore.getDocument();
         validateDocument(document);
-        return envelope(marshal(GetWaybillDocumentResponse.from(document)));
+        return envelope(marshal(waybillSoapMapper.toResponse(document)));
     }
 
     private void readRequest(String requestBody) {

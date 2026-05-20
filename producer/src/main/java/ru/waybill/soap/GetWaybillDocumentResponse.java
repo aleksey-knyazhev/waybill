@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.waybill.models.WaybillDocument;
 
 @XmlRootElement(name = "getWaybillDocumentResponse", namespace = SoapNamespaces.WAYBILL)
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -19,8 +18,4 @@ import ru.waybill.models.WaybillDocument;
 public class GetWaybillDocumentResponse {
     @XmlElement(name = "waybillDocument", namespace = SoapNamespaces.WAYBILL)
     private SoapWaybillDocument waybillDocument;
-
-    public static GetWaybillDocumentResponse from(WaybillDocument document) {
-        return new GetWaybillDocumentResponse(SoapWaybillDocument.from(document));
-    }
 }

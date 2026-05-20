@@ -5,13 +5,16 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ru.waybill.models.WaybillDocument;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class SoapWaybillDocument {
@@ -42,20 +45,4 @@ public class SoapWaybillDocument {
     @XmlElementWrapper(name = "lines", namespace = SoapNamespaces.WAYBILL)
     @XmlElement(name = "line", namespace = SoapNamespaces.WAYBILL)
     private List<SoapWaybillDocumentLine> lines = new ArrayList<>();
-
-    public static SoapWaybillDocument from(WaybillDocument document) {
-        return new SoapWaybillDocument(
-                document.getInvoiceNumber(),
-                document.getInvoiceDate() == null ? null : document.getInvoiceDate().toString(),
-                document.getStatus(),
-                SoapOrganization.from(document.getSeller()),
-                SoapOrganization.from(document.getBuyer()),
-                document.getCurrencyName(),
-                document.getCurrencyCode(),
-                document.getTransferBasis(),
-                document.getLines().stream()
-                        .map(SoapWaybillDocumentLine::from)
-                        .toList()
-        );
-    }
 }

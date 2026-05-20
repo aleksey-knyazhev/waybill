@@ -4,12 +4,15 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ru.waybill.models.WaybillDocumentLine;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @XmlAccessorType(XmlAccessType.FIELD)
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class SoapWaybillDocumentLine {
@@ -33,16 +36,4 @@ public class SoapWaybillDocumentLine {
 
     @XmlElement(namespace = SoapNamespaces.WAYBILL)
     private BigDecimal amountWithTax;
-
-    public static SoapWaybillDocumentLine from(WaybillDocumentLine line) {
-        return new SoapWaybillDocumentLine(
-                line.getLineNumber(),
-                SoapItem.from(line.getItem()),
-                line.getQuantity(),
-                line.getUnitPrice(),
-                line.getAmountWithoutTax(),
-                line.getTaxAmount(),
-                line.getAmountWithTax()
-        );
-    }
 }
