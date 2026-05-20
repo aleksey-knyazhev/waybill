@@ -5,6 +5,7 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.ws.BindingProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import ru.waybill.consumer.soap.generated.GetWaybillDocumentRequest;
 import ru.waybill.consumer.soap.generated.GetWaybillDocumentResponse;
@@ -12,21 +13,26 @@ import ru.waybill.consumer.soap.generated.WaybillDocument;
 import ru.waybill.consumer.soap.generated.WaybillPortType;
 import ru.waybill.consumer.soap.generated.WaybillService;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 @Service
 public class SoapClient {
     private static final String SOAP_ENVELOPE_NAMESPACE = "http://schemas.xmlsoap.org/soap/envelope/";
 
     private final WaybillPortType waybillPort;
+    private final String envelopeTemplate;
 
-    public SoapClient(@Value("${producer.soap.wsdl-url}") String wsdlUrl) throws MalformedURLException {
+    public SoapClient(@Value("${producer.soap.wsdl-url}") String wsdlUrl) throws IOException {
         WaybillService service = new WaybillService(new URL(wsdlUrl));
         this.waybillPort = service.getWaybillPort();
         ((BindingProvider) waybillPort).getRequestContext()
                 .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, serviceEndpoint(wsdlUrl));
+        this.envelopeTemplate = loadEnvelopeTemplate();
     }
 
     public String getWaybillDocument() {
@@ -61,14 +67,9 @@ public class SoapClient {
     }
 
     private String envelope(String body) {
-        return """
-                <?xml version="1.0" encoding="UTF-8"?>
-                <soap:Envelope xmlns:soap="%s">
-                    <soap:Body>
-                        %s
-                    </soap:Body>
-                </soap:Envelope>
-                """.formatted(SOAP_ENVELOPE_NAMESPACE, body);
+        return envelopeTemplate
+                .replace("${soapEnvelopeNamespace}", SOAP_ENVELOPE_NAMESPACE)
+                .replace("${body}", body);
     }
 
     private String withStylesheet(String xml, String stylesheetHref) {
@@ -83,6 +84,12 @@ public class SoapClient {
             case "02" -> "/xslt/waybill-document_version_02.xsl";
             default -> "/xslt/waybill-document_version_01.xsl";
         };
+    }
+
+    private String loadEnvelopeTemplate() throws IOException {
+        try (InputStream inputStream = new ClassPathResource("soap/waybill-envelope.xml").getInputStream()) {
+            return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        }
     }
 
     private String serviceEndpoint(String wsdlUrl) {
