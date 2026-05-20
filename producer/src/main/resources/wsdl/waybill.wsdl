@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                  xmlns:tns="http://waybill.ru/soap"
+                  targetNamespace="http://waybill.ru/soap">
+
+    <wsdl:types>
+        <xs:schema>
+            <xs:import namespace="http://waybill.ru/soap" schemaLocation="${xsdLocation}"/>
+        </xs:schema>
+    </wsdl:types>
+
+    <wsdl:message name="GetWaybillDocumentRequest">
+        <wsdl:part name="parameters" element="tns:getWaybillDocumentRequest"/>
+    </wsdl:message>
+
+    <wsdl:message name="GetWaybillDocumentResponse">
+        <wsdl:part name="parameters" element="tns:getWaybillDocumentResponse"/>
+    </wsdl:message>
+
+    <wsdl:portType name="WaybillPortType">
+        <wsdl:operation name="getWaybillDocument">
+            <wsdl:input message="tns:GetWaybillDocumentRequest"/>
+            <wsdl:output message="tns:GetWaybillDocumentResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="WaybillSoapBinding" type="tns:WaybillPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="getWaybillDocument">
+            <soap:operation soapAction="http://waybill.ru/soap/getWaybillDocument"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="WaybillService">
+        <wsdl:port name="WaybillPort" binding="tns:WaybillSoapBinding">
+            <soap:address location="${serviceLocation}"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
