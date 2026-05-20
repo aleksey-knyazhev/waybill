@@ -1,4 +1,4 @@
-package ru.waybill.models;
+package ru.waybill.producer.models;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

@@ -1,10 +1,9 @@
-package ru.waybill.controllers;
+package ru.waybill.producer.controllers;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.waybill.models.WaybillDocument;
-import ru.waybill.services.WaybillDocumentStore;
+import ru.waybill.producer.models.WaybillDocument;
+import ru.waybill.producer.services.WaybillDocumentStore;
 
 @RestController
 public class WaybillDocumentController {

@@ -1,11 +1,11 @@
-package ru.waybill.soap;
+package ru.waybill.producer.soap;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import ru.waybill.models.Item;
-import ru.waybill.models.Organization;
-import ru.waybill.models.WaybillDocument;
-import ru.waybill.models.WaybillDocumentLine;
+import ru.waybill.producer.models.Item;
+import ru.waybill.producer.models.Organization;
+import ru.waybill.producer.models.WaybillDocument;
+import ru.waybill.producer.models.WaybillDocumentLine;
 
 import java.time.LocalDate;
 

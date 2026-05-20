@@ -1,4 +1,4 @@
-package ru.waybill.controllers;
+package ru.waybill.producer.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.io.ClassPathResource;

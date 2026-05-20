@@ -1,48 +1,39 @@
-package ru.waybill.soap;
+package ru.waybill.producer.soap;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SoapWaybillDocument {
+public class SoapWaybillDocumentLine {
     @XmlElement(namespace = SoapNamespaces.WAYBILL)
-    private String invoiceNumber;
+    private Integer lineNumber;
 
     @XmlElement(namespace = SoapNamespaces.WAYBILL)
-    private String invoiceDate;
+    private SoapItem item;
 
     @XmlElement(namespace = SoapNamespaces.WAYBILL)
-    private Integer status;
+    private BigDecimal quantity;
 
     @XmlElement(namespace = SoapNamespaces.WAYBILL)
-    private SoapOrganization seller;
+    private BigDecimal unitPrice;
 
     @XmlElement(namespace = SoapNamespaces.WAYBILL)
-    private SoapOrganization buyer;
+    private BigDecimal amountWithoutTax;
 
     @XmlElement(namespace = SoapNamespaces.WAYBILL)
-    private String currencyName;
+    private BigDecimal taxAmount;
 
     @XmlElement(namespace = SoapNamespaces.WAYBILL)
-    private String currencyCode;
-
-    @XmlElement(namespace = SoapNamespaces.WAYBILL)
-    private String transferBasis;
-
-    @XmlElementWrapper(name = "lines", namespace = SoapNamespaces.WAYBILL)
-    @XmlElement(name = "line", namespace = SoapNamespaces.WAYBILL)
-    private List<SoapWaybillDocumentLine> lines = new ArrayList<>();
+    private BigDecimal amountWithTax;
 }

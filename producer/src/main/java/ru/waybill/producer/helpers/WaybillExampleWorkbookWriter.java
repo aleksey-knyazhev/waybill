@@ -1,4 +1,4 @@
-package ru.waybill.helpers;
+package ru.waybill.producer.helpers;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -6,9 +6,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellReference;
-import ru.waybill.models.Item;
-import ru.waybill.models.WaybillDocument;
-import ru.waybill.models.WaybillDocumentLine;
+import ru.waybill.producer.models.Item;
+import ru.waybill.producer.models.WaybillDocument;
+import ru.waybill.producer.models.WaybillDocumentLine;
 
 import java.io.IOException;
 import java.io.InputStream;

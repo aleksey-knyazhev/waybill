@@ -1,9 +1,9 @@
-package ru.waybill.helpers;
+package ru.waybill.producer.helpers;
 
-import ru.waybill.models.Item;
-import ru.waybill.models.Organization;
-import ru.waybill.models.WaybillDocument;
-import ru.waybill.models.WaybillDocumentLine;
+import ru.waybill.producer.models.Item;
+import ru.waybill.producer.models.Organization;
+import ru.waybill.producer.models.WaybillDocument;
+import ru.waybill.producer.models.WaybillDocumentLine;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

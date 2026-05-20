@@ -1,4 +1,4 @@
-package ru.waybill.controllers;
+package ru.waybill.producer.controllers;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.multipart.MultipartFile;
-import ru.waybill.models.Item;
-import ru.waybill.models.Organization;
-import ru.waybill.models.WaybillDocument;
-import ru.waybill.models.WaybillDocumentLine;
-import ru.waybill.services.WaybillDocumentStore;
+import ru.waybill.producer.models.Item;
+import ru.waybill.producer.models.Organization;
+import ru.waybill.producer.models.WaybillDocument;
+import ru.waybill.producer.models.WaybillDocumentLine;
+import ru.waybill.producer.services.WaybillDocumentStore;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,7 +1,7 @@
-package ru.waybill.services;
+package ru.waybill.producer.services;
 
 import org.springframework.stereotype.Service;
-import ru.waybill.models.WaybillDocument;
+import ru.waybill.producer.models.WaybillDocument;
 
 import java.util.concurrent.atomic.AtomicReference;
 

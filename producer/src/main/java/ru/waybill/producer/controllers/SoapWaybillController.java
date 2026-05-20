@@ -1,4 +1,4 @@
-package ru.waybill.controllers;
+package ru.waybill.producer.controllers;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -16,12 +16,12 @@ import org.springframework.web.server.ResponseStatusException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
-import ru.waybill.models.WaybillDocument;
-import ru.waybill.services.WaybillDocumentStore;
-import ru.waybill.soap.GetWaybillDocumentRequest;
-import ru.waybill.soap.GetWaybillDocumentResponse;
-import ru.waybill.soap.SoapNamespaces;
-import ru.waybill.soap.WaybillSoapMapper;
+import ru.waybill.producer.models.WaybillDocument;
+import ru.waybill.producer.services.WaybillDocumentStore;
+import ru.waybill.producer.soap.GetWaybillDocumentRequest;
+import ru.waybill.producer.soap.GetWaybillDocumentResponse;
+import ru.waybill.producer.soap.SoapNamespaces;
+import ru.waybill.producer.soap.WaybillSoapMapper;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;

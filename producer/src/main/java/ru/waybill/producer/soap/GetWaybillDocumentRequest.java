@@ -1,4 +1,4 @@
-package ru.waybill.soap;
+package ru.waybill.producer.soap;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;

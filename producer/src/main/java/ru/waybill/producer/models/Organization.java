@@ -1,4 +1,4 @@
-package ru.waybill.models;
+package ru.waybill.producer.models;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package ru.waybill.soap;
+package ru.waybill.producer.soap;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -13,16 +13,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SoapItem {
-    @XmlElement(namespace = SoapNamespaces.WAYBILL)
-    private String productCode;
-
+public class SoapOrganization {
     @XmlElement(namespace = SoapNamespaces.WAYBILL)
     private String name;
 
     @XmlElement(namespace = SoapNamespaces.WAYBILL)
-    private String unitCode;
-
-    @XmlElement(namespace = SoapNamespaces.WAYBILL)
-    private String unitName;
+    private String innKpp;
 }
