@@ -55,8 +55,7 @@ public class ImportController {
         try (InputStream input = file.getInputStream();
              Workbook workbook = WorkbookFactory.create(input)) {
             WaybillDocument document = readDocument(workbook.getSheetAt(0));
-            documentStore.setDocument(document);
-            return document;
+            return documentStore.setDocument(document);
         }
     }
 
