@@ -109,40 +109,51 @@ VALUES ('02', 'waybill-document_version_02.xsl', 'application/xslt+xml', $xslt$<
 
         <section>
             <h2>Document</h2>
-            <dl>
-                <dt>Invoice number</dt>
-                <dd><xsl:value-of select="$document/w:invoiceNumber"/></dd>
-                <dt>Invoice date</dt>
-                <dd><xsl:value-of select="$document/w:invoiceDate"/></dd>
-                <dt>Status</dt>
-                <dd><xsl:value-of select="$document/w:status"/></dd>
-                <dt>Currency</dt>
-                <dd>
-                    <xsl:value-of select="$document/w:currencyName"/>
-                    <xsl:text> </xsl:text>
-                    <xsl:value-of select="$document/w:currencyCode"/>
-                </dd>
-                <dt>Transfer basis</dt>
-                <dd><xsl:value-of select="$document/w:transferBasis"/></dd>
-            </dl>
+            <div class="organizations">
+                <dl>
+                    <dt>Invoice number</dt>
+                    <dd><xsl:value-of select="$document/w:invoiceNumber"/></dd>
+                    <dt>Invoice date</dt>
+                    <dd><xsl:value-of select="$document/w:invoiceDate"/></dd>
+                    <dt>Status</dt>
+                    <dd><xsl:value-of select="$document/w:status"/></dd>
+                </dl>
+                <dl>
+                    <dt>Currency</dt>
+                    <dd>
+                        <xsl:value-of select="$document/w:currencyName"/>
+                        <xsl:text> </xsl:text>
+                        <xsl:value-of select="$document/w:currencyCode"/>
+                    </dd>
+                    <dt>Transfer basis</dt>
+                    <dd><xsl:value-of select="$document/w:transferBasis"/></dd>
+                </dl>
+            </div>
         </section>
 
         <section>
             <h2>Organizations</h2>
-            <div class="organizations">
-                <dl>
-                    <dt>Seller</dt>
-                    <dd><xsl:value-of select="$document/w:seller/w:name"/></dd>
-                    <dt>INN/KPP</dt>
-                    <dd><xsl:value-of select="$document/w:seller/w:innKpp"/></dd>
-                </dl>
-                <dl>
-                    <dt>Buyer</dt>
-                    <dd><xsl:value-of select="$document/w:buyer/w:name"/></dd>
-                    <dt>INN/KPP</dt>
-                    <dd><xsl:value-of select="$document/w:buyer/w:innKpp"/></dd>
-                </dl>
-            </div>
+            <table>
+                <thead>
+                <tr>
+                    <th>Role</th>
+                    <th>Name</th>
+                    <th>INN/KPP</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Seller</td>
+                    <td><xsl:value-of select="$document/w:seller/w:name"/></td>
+                    <td><xsl:value-of select="$document/w:seller/w:innKpp"/></td>
+                </tr>
+                <tr>
+                    <td>Buyer</td>
+                    <td><xsl:value-of select="$document/w:buyer/w:name"/></td>
+                    <td><xsl:value-of select="$document/w:buyer/w:innKpp"/></td>
+                </tr>
+                </tbody>
+            </table>
         </section>
 
         <section>
