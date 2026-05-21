@@ -19,13 +19,10 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.regex.Pattern;
 
 @Service
 public class SoapClient {
     private static final String SOAP_ENVELOPE_NAMESPACE = "http://schemas.xmlsoap.org/soap/envelope/";
-    private static final Pattern XSLT_VERSION_PATTERN = Pattern.compile("\\d{2}");
 
     private final WaybillPortType waybillPort;
     private final String envelopeTemplate;
@@ -41,10 +38,6 @@ public class SoapClient {
     public String getWaybillDocument() {
         GetWaybillDocumentResponse response = getWaybillDocumentResponse();
         return envelope(marshal(response));
-    }
-
-    public String getWaybillDocumentView(String xsltVersion) {
-        return withStylesheet(getWaybillDocument(), stylesheetHref(xsltVersion));
     }
 
     public WaybillDocument getWaybillDocumentObject() {
@@ -73,18 +66,6 @@ public class SoapClient {
         return envelopeTemplate
                 .replace("${soapEnvelopeNamespace}", SOAP_ENVELOPE_NAMESPACE)
                 .replace("${body}", body);
-    }
-
-    private String withStylesheet(String xml, String stylesheetHref) {
-        return xml.replaceFirst(
-                "\\?>",
-                "?>\n<?xml-stylesheet type=\"text/xsl\" href=\"" + stylesheetHref + "\"?>"
-        );
-    }
-
-    private String stylesheetHref(String xsltVersion) {
-        String version = XSLT_VERSION_PATTERN.matcher(xsltVersion).matches() ? xsltVersion : "01";
-        return "/xslt/waybill-document_version_" + version + ".xsl?v=" + Instant.now().toEpochMilli();
     }
 
     private String loadEnvelopeTemplate() throws IOException {

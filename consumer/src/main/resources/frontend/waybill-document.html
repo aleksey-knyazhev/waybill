@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waybill document</title>
+    <style>
+        body {
+            margin: 0;
+            color: #1f2937;
+            background: #f4f6f8;
+            font-family: Arial, sans-serif;
+        }
+
+        main {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        h1 {
+            margin: 0 0 24px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+            padding: 20px;
+            background: #ffffff;
+            border: 1px solid #d7dde5;
+            border-radius: 8px;
+            flex-wrap: wrap;
+        }
+
+        .style-switcher,
+        .upload-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-form {
+            flex: 1 1 520px;
+        }
+
+        .style-switcher {
+            flex: 0 1 360px;
+            justify-content: flex-end;
+        }
+
+        .style-switcher label,
+        .upload-form label {
+            color: #5b6472;
+            font-weight: 700;
+        }
+
+        .style-switcher select,
+        .upload-form input[type="file"] {
+            min-width: 220px;
+            padding: 8px 10px;
+            color: #1f2937;
+            background: #ffffff;
+            border: 1px solid #b8c1cc;
+            border-radius: 6px;
+            font: inherit;
+        }
+
+        .upload-form input[type="file"] {
+            flex: 1 1 260px;
+        }
+
+        .upload-form button {
+            padding: 9px 14px;
+            color: #ffffff;
+            background: #1f2937;
+            border: 0;
+            border-radius: 6px;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .upload-form button:disabled {
+            cursor: default;
+            opacity: 0.45;
+        }
+
+        h2 {
+            margin: 0 0 12px;
+            font-size: 18px;
+        }
+
+        section {
+            margin-bottom: 24px;
+            padding: 20px;
+            background: #ffffff;
+            border: 1px solid #d7dde5;
+            border-radius: 8px;
+        }
+
+        dl {
+            display: grid;
+            grid-template-columns: minmax(160px, 240px) 1fr;
+            gap: 10px 16px;
+            margin: 0;
+        }
+
+        dt {
+            color: #5b6472;
+            font-weight: 700;
+        }
+
+        dd {
+            margin: 0;
+        }
+
+        .organizations {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+        }
+
+        th,
+        td {
+            padding: 10px 12px;
+            border: 1px solid #d7dde5;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            color: #374151;
+            background: #eef2f7;
+            font-weight: 700;
+        }
+
+        .number {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .view-error {
+            margin: 0;
+            color: #991b1b;
+            font-weight: 700;
+        }
+
+        @media (max-width: 760px) {
+            main {
+                padding: 20px 12px;
+            }
+
+            .toolbar,
+            .style-switcher,
+            .upload-form {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            dl,
+            .organizations {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <div class="toolbar">
+        <form class="upload-form" action="/xslt" method="post" enctype="multipart/form-data">
+            <label for="xslt-file">XSLT версия:</label>
+            <input id="xslt-file" name="file" type="file" accept=".xsl,application/xslt+xml,text/xml" required>
+            <button id="xslt-upload-button" type="submit" disabled>Загрузить</button>
+        </form>
+        <div class="style-switcher">
+            <label for="xslt-version">XSLT версия:</label>
+            <select id="xslt-version">
+                <option value="">Загрузка...</option>
+            </select>
+        </div>
+    </div>
+    <div id="waybill-document"></div>
+</main>
+<script>
+    (function () {
+        const container = document.getElementById('waybill-document');
+        const select = document.getElementById('xslt-version');
+        const fileInput = document.getElementById('xslt-file');
+        const uploadButton = document.getElementById('xslt-upload-button');
+        const selectedVersion = new URLSearchParams(window.location.search).get('xslt') || '01';
+
+        fileInput.addEventListener('change', function () {
+            uploadButton.disabled = fileInput.files.length === 0;
+        });
+
+        select.addEventListener('change', function () {
+            if (select.value) {
+                window.location.href = '/import/waybill-document?xslt=' + encodeURIComponent(select.value);
+            }
+        });
+
+        fetch('/xslt')
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Cannot load XSLT versions');
+                }
+                return response.json();
+            })
+            .then(function (templates) {
+                select.innerHTML = '';
+                templates.forEach(function (template) {
+                    const option = document.createElement('option');
+                    option.value = template.version;
+                    option.textContent = template.fileName;
+                    option.selected = template.version === selectedVersion;
+                    select.appendChild(option);
+                });
+                const selectedTemplate = templates.find(function (template) {
+                    return template.version === selectedVersion;
+                }) || templates[0];
+                if (!selectedTemplate) {
+                    throw new Error('XSLT templates are not configured');
+                }
+                return renderWaybill(selectedTemplate.fileName);
+            })
+            .catch(showError);
+
+        function renderWaybill(fileName) {
+            const cacheKey = Date.now();
+            return Promise.all([
+                fetch('/api/xml/waybill-document?v=' + cacheKey).then(readXml),
+                fetch('/xslt/' + encodeURIComponent(fileName) + '?v=' + cacheKey).then(readXml)
+            ]).then(function (results) {
+                const processor = new XSLTProcessor();
+                processor.importStylesheet(results[1]);
+                const fragment = processor.transformToFragment(results[0], document);
+                container.replaceChildren(fragment);
+            });
+        }
+
+        function readXml(response) {
+            if (!response.ok) {
+                throw new Error('Cannot load waybill document');
+            }
+            return response.text().then(function (text) {
+                return new DOMParser().parseFromString(text, 'application/xml');
+            });
+        }
+
+        function showError(error) {
+            container.innerHTML = '';
+            const section = document.createElement('section');
+            const message = document.createElement('p');
+            message.className = 'view-error';
+            message.textContent = error.message;
+            section.appendChild(message);
+            container.appendChild(section);
+        }
+    }());
+</script>
+</body>
+</html>
