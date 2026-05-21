@@ -2,18 +2,21 @@ package ru.waybill.producer.services;
 
 import org.springframework.stereotype.Service;
 import ru.waybill.producer.models.WaybillDocument;
-
-import java.util.concurrent.atomic.AtomicReference;
+import ru.waybill.producer.repositories.WaybillDocumentRepository;
 
 @Service
 public class WaybillDocumentStore {
-    private final AtomicReference<WaybillDocument> document = new AtomicReference<>(new WaybillDocument());
+    private final WaybillDocumentRepository repository;
+
+    public WaybillDocumentStore(WaybillDocumentRepository repository) {
+        this.repository = repository;
+    }
 
     public WaybillDocument getDocument() {
-        return document.get();
+        return repository.findTopByOrderByIdDesc().orElseGet(WaybillDocument::new);
     }
 
     public void setDocument(WaybillDocument document) {
-        this.document.set(document);
+        repository.save(document);
     }
 }

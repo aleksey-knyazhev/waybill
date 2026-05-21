@@ -1,5 +1,15 @@
 package ru.waybill.producer.models;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +26,12 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class WaybillDocument {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @NotBlank
     private String invoiceNumber;
 
@@ -27,10 +42,20 @@ public class WaybillDocument {
 
     @Valid
     @NotNull
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "name", column = @Column(name = "seller_name")),
+            @AttributeOverride(name = "innKpp", column = @Column(name = "seller_inn_kpp"))
+    })
     private Organization seller;
 
     @Valid
     @NotNull
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "name", column = @Column(name = "buyer_name")),
+            @AttributeOverride(name = "innKpp", column = @Column(name = "buyer_inn_kpp"))
+    })
     private Organization buyer;
 
     private String currencyName;
@@ -39,5 +64,6 @@ public class WaybillDocument {
 
     @Valid
     @NotNull
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WaybillDocumentLine> lines = new ArrayList<>();
 }
