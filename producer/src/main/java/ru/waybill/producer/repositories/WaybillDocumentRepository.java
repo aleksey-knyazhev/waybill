@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import ru.waybill.producer.models.WaybillDocument;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface WaybillDocumentRepository extends JpaRepository<WaybillDocument, Long> {
@@ -13,4 +14,6 @@ public interface WaybillDocumentRepository extends JpaRepository<WaybillDocument
 
     @EntityGraph(attributePaths = "lines")
     Optional<WaybillDocument> findByInvoiceNumberAndInvoiceDate(String invoiceNumber, LocalDate invoiceDate);
+
+    List<WaybillDocument> findAllByOrderByInvoiceDateDescInvoiceNumberAsc();
 }

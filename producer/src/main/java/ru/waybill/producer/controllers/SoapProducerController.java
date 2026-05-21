@@ -18,7 +18,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import ru.waybill.producer.mappers.WaybillSoapMapper;
 import ru.waybill.producer.models.WaybillDocument;
-import ru.waybill.producer.services.WaybillDocumentStore;
+import ru.waybill.producer.services.WaybillDocumentService;
 import ru.waybill.producer.soap.GetWaybillDocumentRequest;
 import ru.waybill.producer.soap.GetWaybillDocumentResponse;
 import ru.waybill.producer.soap.SoapNamespaces;
@@ -34,18 +34,18 @@ import java.util.Set;
 
 @RestController
 public class SoapProducerController {
-    private final WaybillDocumentStore documentStore;
+    private final WaybillDocumentService documentService;
     private final WaybillSoapMapper waybillSoapMapper;
     private final Validator validator;
     private final JAXBContext jaxbContext;
     private final String envelopeTemplate;
 
     public SoapProducerController(
-            WaybillDocumentStore documentStore,
+            WaybillDocumentService documentService,
             WaybillSoapMapper waybillSoapMapper,
             Validator validator
     ) throws JAXBException, IOException {
-        this.documentStore = documentStore;
+        this.documentService = documentService;
         this.waybillSoapMapper = waybillSoapMapper;
         this.validator = validator;
         this.jaxbContext = JAXBContext.newInstance(GetWaybillDocumentRequest.class, GetWaybillDocumentResponse.class);
@@ -59,7 +59,7 @@ public class SoapProducerController {
     )
     public String getWaybillDocument(@RequestBody String requestBody) {
         readRequest(requestBody);
-        WaybillDocument document = documentStore.getDocument();
+        WaybillDocument document = documentService.getDocument();
         validateDocument(document);
         return envelope(marshal(waybillSoapMapper.toResponse(document)));
     }
