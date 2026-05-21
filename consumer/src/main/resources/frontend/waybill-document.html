@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Waybill document</title>
+    <title>Документ УПД</title>
     <style>
         body {
             margin: 0;
@@ -188,7 +188,7 @@
 <body>
 <main>
     <div class="toolbar">
-        <h2 class="toolbar-title">XSLT</h2>
+        <h2 class="toolbar-title">Настройки XSLT</h2>
         <form class="upload-form" action="/xslt" method="post" enctype="multipart/form-data">
             <label for="xslt-file">Загрузить:</label>
             <input id="xslt-file" name="file" type="file" accept=".xsl,application/xslt+xml,text/xml" required>
@@ -224,7 +224,7 @@
         fetch('/xslt')
             .then(function (response) {
                 if (!response.ok) {
-                    throw new Error('Cannot load XSLT versions');
+                    throw new Error('Не удалось загрузить версии XSLT');
                 }
                 return response.json();
             })
@@ -241,7 +241,7 @@
                     return template.version === selectedVersion;
                 }) || templates[0];
                 if (!selectedTemplate) {
-                    throw new Error('XSLT templates are not configured');
+                    throw new Error('XSLT-шаблоны не настроены');
                 }
                 return renderWaybill(selectedTemplate.fileName);
             })
@@ -262,7 +262,7 @@
 
         function readXml(response) {
             if (!response.ok) {
-                throw new Error('Cannot load waybill document');
+                throw new Error('Не удалось загрузить документ');
             }
             return response.text().then(function (text) {
                 return new DOMParser().parseFromString(text, 'application/xml');

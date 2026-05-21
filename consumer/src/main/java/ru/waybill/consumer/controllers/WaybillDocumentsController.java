@@ -46,6 +46,7 @@ public class WaybillDocumentsController {
                     .append(cell(organizationInnKpp(document.buyer())))
                     .append(cell(currency(document)))
                     .append(cell(document.transferBasis()))
+                    .append(importCell())
                     .append("</tr>");
         }
 
@@ -61,6 +62,10 @@ public class WaybillDocumentsController {
 
     private String cell(Object value) {
         return "<td>" + escape(value == null ? "" : value.toString()) + "</td>";
+    }
+
+    private String importCell() {
+        return "<td><a class=\"import-link\" href=\"/import/waybill-document\">Импорт</a></td>";
     }
 
     private String organizationName(OrganizationHeader organization) {

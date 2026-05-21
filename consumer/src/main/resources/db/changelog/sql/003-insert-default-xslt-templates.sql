@@ -9,60 +9,60 @@ VALUES ('01', 'waybill-document_version_01.xsl', 'application/xslt+xml', $xslt$<
 
     <xsl:template match="/">
         <xsl:variable name="document" select="/soap:Envelope/soap:Body/w:getWaybillDocumentResponse/w:waybillDocument"/>
-        <h1>Waybill document</h1>
+        <h1>Документ УПД</h1>
 
         <section>
-            <h2>Document</h2>
+            <h2>Документ</h2>
             <dl>
-                <dt>Invoice number</dt>
+                <dt>Номер</dt>
                 <dd><xsl:value-of select="$document/w:invoiceNumber"/></dd>
-                <dt>Invoice date</dt>
+                <dt>Дата</dt>
                 <dd><xsl:value-of select="$document/w:invoiceDate"/></dd>
-                <dt>Status</dt>
+                <dt>Статус</dt>
                 <dd><xsl:value-of select="$document/w:status"/></dd>
-                <dt>Currency</dt>
+                <dt>Валюта</dt>
                 <dd>
                     <xsl:value-of select="$document/w:currencyName"/>
                     <xsl:text> </xsl:text>
                     <xsl:value-of select="$document/w:currencyCode"/>
                 </dd>
-                <dt>Transfer basis</dt>
+                <dt>Основание передачи</dt>
                 <dd><xsl:value-of select="$document/w:transferBasis"/></dd>
             </dl>
         </section>
 
         <section>
-            <h2>Organizations</h2>
+            <h2>Организации</h2>
             <div class="organizations">
                 <dl>
-                    <dt>Seller</dt>
+                    <dt>Продавец</dt>
                     <dd><xsl:value-of select="$document/w:seller/w:name"/></dd>
-                    <dt>INN/KPP</dt>
+                    <dt>ИНН/КПП</dt>
                     <dd><xsl:value-of select="$document/w:seller/w:innKpp"/></dd>
                 </dl>
                 <dl>
-                    <dt>Buyer</dt>
+                    <dt>Покупатель</dt>
                     <dd><xsl:value-of select="$document/w:buyer/w:name"/></dd>
-                    <dt>INN/KPP</dt>
+                    <dt>ИНН/КПП</dt>
                     <dd><xsl:value-of select="$document/w:buyer/w:innKpp"/></dd>
                 </dl>
             </div>
         </section>
 
         <section>
-            <h2>Lines</h2>
+            <h2>Строки</h2>
             <table>
                 <thead>
                 <tr>
-                    <th>No.</th>
-                    <th>Product code</th>
-                    <th>Name</th>
-                    <th>Unit</th>
-                    <th>Quantity</th>
-                    <th>Unit price</th>
-                    <th>Without tax</th>
-                    <th>Tax</th>
-                    <th>With tax</th>
+                    <th>№</th>
+                    <th>Код товара</th>
+                    <th>Наименование</th>
+                    <th>Ед. изм.</th>
+                    <th>Количество</th>
+                    <th>Цена</th>
+                    <th>Без налога</th>
+                    <th>Налог</th>
+                    <th>С налогом</th>
                 </tr>
                 </thead>
                 <tbody>
