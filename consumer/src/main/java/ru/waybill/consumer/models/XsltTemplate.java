@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "xslt_template", schema = "waybill")
+@Table(name = "xslt_template", schema = "waybill_consumer")
 public class XsltTemplate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,3 +62,4 @@ public class XsltTemplate {
         return content;
     }
 }
+

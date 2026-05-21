@@ -1,4 +1,4 @@
-﻿INSERT INTO waybill.xslt_template (version, file_name, content_type, content)
+INSERT INTO waybill_consumer.xslt_template (version, file_name, content_type, content)
 VALUES ('01', 'waybill-document_version_01.xsl', 'application/xslt+xml', $xslt$<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -308,7 +308,7 @@ SET file_name = EXCLUDED.file_name,
     content_type = EXCLUDED.content_type,
     content = EXCLUDED.content;
 
-INSERT INTO waybill.xslt_template (version, file_name, content_type, content)
+INSERT INTO waybill_consumer.xslt_template (version, file_name, content_type, content)
 VALUES ('02', 'waybill-document_version_02.xsl', 'application/xslt+xml', $xslt$<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -619,6 +619,7 @@ ON CONFLICT (version) DO UPDATE
 SET file_name = EXCLUDED.file_name,
     content_type = EXCLUDED.content_type,
     content = EXCLUDED.content;
+
 
 
 
