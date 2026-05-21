@@ -68,6 +68,26 @@
 6. Полученный XML преобразуется в HTML выбранным XSLT-шаблоном.
 7. Пользователь может интерактивно переключать XSLT-шаблон на экране анализа.
 
+## Скриншоты
+
+### Составной индекс
+
+![Составной индекс](docs/screenshots/indexes.png)
+
+### Список документов
+
+![Список документов](docs/screenshots/consumer-documents-list.png)
+
+### Анализ документа
+
+![Анализ документа](docs/screenshots/consumer-document-analysis-xslt-01.png)
+
+### Анализ документа с другим XSLT-шаблоном
+
+При смене XSLT-шаблона на `waybill-document_version_02.xsl` меняется представление документа: другой дизайн и другой язык отображения.
+
+![Анализ документа с XSLT version 02](docs/screenshots/consumer-document-analysis-xslt-02.png)
+
 ## Запуск
 
 Требования:
