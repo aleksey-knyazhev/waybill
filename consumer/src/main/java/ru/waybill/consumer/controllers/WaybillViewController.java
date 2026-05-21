@@ -8,10 +8,10 @@ import ru.waybill.consumer.services.SoapClient;
 import ru.waybill.consumer.soap.generated.WaybillDocument;
 
 @RestController
-public class ImportController {
+public class WaybillViewController {
     private final SoapClient soapClient;
 
-    public ImportController(SoapClient soapClient) {
+    public WaybillViewController(SoapClient soapClient) {
         this.soapClient = soapClient;
     }
 
