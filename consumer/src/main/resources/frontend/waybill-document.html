@@ -37,6 +37,11 @@
             flex-wrap: wrap;
         }
 
+        .toolbar-title {
+            flex: 0 0 100%;
+            margin: 0;
+        }
+
         .style-switcher,
         .upload-form {
             display: flex;
@@ -183,13 +188,14 @@
 <body>
 <main>
     <div class="toolbar">
+        <h2 class="toolbar-title">XSLT</h2>
         <form class="upload-form" action="/xslt" method="post" enctype="multipart/form-data">
-            <label for="xslt-file">XSLT версия:</label>
+            <label for="xslt-file">Загрузить:</label>
             <input id="xslt-file" name="file" type="file" accept=".xsl,application/xslt+xml,text/xml" required>
             <button id="xslt-upload-button" type="submit" disabled>Загрузить</button>
         </form>
         <div class="style-switcher">
-            <label for="xslt-version">XSLT версия:</label>
+            <label for="xslt-version">Выбрать:</label>
             <select id="xslt-version">
                 <option value="">Загрузка...</option>
             </select>
