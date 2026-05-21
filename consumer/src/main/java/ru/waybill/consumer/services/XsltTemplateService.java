@@ -36,6 +36,10 @@ public class XsltTemplateService {
 
     @Transactional
     public XsltTemplate save(MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("XSLT file is required");
+        }
+
         String fileName = cleanFileName(file.getOriginalFilename());
         String version = version(fileName);
         String content = new String(file.getBytes(), StandardCharsets.UTF_8);

@@ -188,14 +188,14 @@ VALUES ('01', 'waybill-document_version_01.xsl', 'application/xslt+xml', $xslt$<
         <main>
             <div class="toolbar">
                 <form class="upload-form" action="/xslt" method="post" enctype="multipart/form-data">
-                    <label for="xslt-file">XSLT РІРµСЂСЃРёСЏ:</label>
-                    <input id="xslt-file" name="file" type="file" accept=".xsl,application/xslt+xml,text/xml"/>
-                    <button type="submit">Р—Р°РіСЂСѓР·РёС‚СЊ</button>
+                    <label for="xslt-file">XSLT версия:</label>
+                    <input id="xslt-file" name="file" type="file" accept=".xsl,application/xslt+xml,text/xml" required="required"/>
+                    <button id="xslt-upload-button" type="submit" disabled="disabled">Загрузить</button>
                 </form>
                 <div class="style-switcher">
-                    <label for="xslt-version">XSLT РІРµСЂСЃРёСЏ:</label>
+                    <label for="xslt-version">XSLT версия:</label>
                     <select id="xslt-version" onchange="window.location.href='/import/waybill-document?xslt=' + this.value">
-                        <option value="">Р—Р°РіСЂСѓР·РєР°...</option>
+                        <option value="">Загрузка...</option>
                     </select>
                 </div>
             </div>
@@ -204,6 +204,11 @@ VALUES ('01', 'waybill-document_version_01.xsl', 'application/xslt+xml', $xslt$<
                 (function () {
                     const select = document.getElementById('xslt-version');
                     const selectedVersion = new URLSearchParams(window.location.search).get('xslt') || '01';
+                    const fileInput = document.getElementById('xslt-file');
+                    const uploadButton = document.getElementById('xslt-upload-button');
+                    fileInput.addEventListener('change', () => {
+                        uploadButton.disabled = fileInput.files.length === 0;
+                    });
 
                     fetch('/xslt')
                         .then((response) => response.json())
@@ -500,14 +505,14 @@ VALUES ('02', 'waybill-document_version_02.xsl', 'application/xslt+xml', $xslt$<
         <main>
             <div class="toolbar">
                 <form class="upload-form" action="/xslt" method="post" enctype="multipart/form-data">
-                    <label for="xslt-file">XSLT РІРµСЂСЃРёСЏ:</label>
-                    <input id="xslt-file" name="file" type="file" accept=".xsl,application/xslt+xml,text/xml"/>
-                    <button type="submit">Р—Р°РіСЂСѓР·РёС‚СЊ</button>
+                    <label for="xslt-file">XSLT версия:</label>
+                    <input id="xslt-file" name="file" type="file" accept=".xsl,application/xslt+xml,text/xml" required="required"/>
+                    <button id="xslt-upload-button" type="submit" disabled="disabled">Загрузить</button>
                 </form>
                 <div class="style-switcher">
-                    <label for="xslt-version">XSLT РІРµСЂСЃРёСЏ:</label>
+                    <label for="xslt-version">XSLT версия:</label>
                     <select id="xslt-version" onchange="window.location.href='/import/waybill-document?xslt=' + this.value">
-                        <option value="">Р—Р°РіСЂСѓР·РєР°...</option>
+                        <option value="">Загрузка...</option>
                     </select>
                 </div>
             </div>
@@ -516,6 +521,11 @@ VALUES ('02', 'waybill-document_version_02.xsl', 'application/xslt+xml', $xslt$<
                 (function () {
                     const select = document.getElementById('xslt-version');
                     const selectedVersion = new URLSearchParams(window.location.search).get('xslt') || '01';
+                    const fileInput = document.getElementById('xslt-file');
+                    const uploadButton = document.getElementById('xslt-upload-button');
+                    fileInput.addEventListener('change', () => {
+                        uploadButton.disabled = fileInput.files.length === 0;
+                    });
 
                     fetch('/xslt')
                         .then((response) => response.json())
