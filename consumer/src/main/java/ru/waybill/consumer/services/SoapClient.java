@@ -16,9 +16,11 @@ import ru.waybill.consumer.soap.generated.WaybillService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 @Service
 public class SoapClient {
@@ -35,17 +37,28 @@ public class SoapClient {
         this.envelopeTemplate = loadEnvelopeTemplate();
     }
 
-    public String getWaybillDocument() {
-        GetWaybillDocumentResponse response = getWaybillDocumentResponse();
+    public String getWaybillDocument(String invoiceNumber, String invoiceDate) {
+        GetWaybillDocumentResponse response = getWaybillDocumentResponse(invoiceNumber, invoiceDate);
         return envelope(marshal(response));
     }
 
-    public WaybillDocument getWaybillDocumentObject() {
-        return getWaybillDocumentResponse().getWaybillDocument();
+    public WaybillDocument getWaybillDocumentObject(String invoiceNumber, String invoiceDate) {
+        return getWaybillDocumentResponse(invoiceNumber, invoiceDate).getWaybillDocument();
     }
 
-    private GetWaybillDocumentResponse getWaybillDocumentResponse() {
-        return waybillPort.getWaybillDocument(new GetWaybillDocumentRequest());
+    private GetWaybillDocumentResponse getWaybillDocumentResponse(String invoiceNumber, String invoiceDate) {
+        GetWaybillDocumentRequest request = new GetWaybillDocumentRequest();
+        request.setInvoiceNumber(invoiceNumber);
+        request.setInvoiceDate(xmlDate(invoiceDate));
+        return waybillPort.getWaybillDocument(request);
+    }
+
+    private XMLGregorianCalendar xmlDate(String invoiceDate) {
+        try {
+            return DatatypeFactory.newInstance().newXMLGregorianCalendar(invoiceDate);
+        } catch (DatatypeConfigurationException exception) {
+            throw new IllegalStateException("Cannot create XML date converter", exception);
+        }
     }
 
     private String marshal(GetWaybillDocumentResponse response) {

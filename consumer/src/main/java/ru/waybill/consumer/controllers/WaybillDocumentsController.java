@@ -10,6 +10,7 @@ import ru.waybill.consumer.services.WaybillDocumentHeaderClient;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class WaybillDocumentsController {
                     .append(cell(organizationInnKpp(document.buyer())))
                     .append(cell(currency(document)))
                     .append(cell(document.transferBasis()))
-                    .append(importCell())
+                    .append(importCell(document))
                     .append("</tr>");
         }
 
@@ -64,8 +65,12 @@ public class WaybillDocumentsController {
         return "<td>" + escape(value == null ? "" : value.toString()) + "</td>";
     }
 
-    private String importCell() {
-        return "<td><a class=\"import-link\" href=\"/import/waybill-document\">Импорт</a></td>";
+    private String importCell(WaybillDocumentHeader document) {
+        return "<td><a class=\"import-link\" href=\"/import/waybill-document?invoiceNumber="
+                + url(document.invoiceNumber())
+                + "&invoiceDate="
+                + url(document.invoiceDate())
+                + "\">Анализ</a></td>";
     }
 
     private String organizationName(OrganizationHeader organization) {
@@ -89,6 +94,10 @@ public class WaybillDocumentsController {
                 .replace(">", "&gt;")
                 .replace("\"", "&quot;")
                 .replace("'", "&#39;");
+    }
+
+    private String url(Object value) {
+        return URLEncoder.encode(value == null ? "" : value.toString(), StandardCharsets.UTF_8);
     }
 
     private String loadWaybillDocumentsPage() throws IOException {

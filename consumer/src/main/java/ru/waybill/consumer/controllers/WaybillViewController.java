@@ -3,6 +3,7 @@ package ru.waybill.consumer.controllers;
 import org.springframework.http.MediaType;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.waybill.consumer.services.SoapClient;
 import ru.waybill.consumer.soap.generated.WaybillDocument;
@@ -22,13 +23,19 @@ public class WaybillViewController {
     }
 
     @GetMapping(value = "/api/xsd/waybill-document", produces = MediaType.APPLICATION_JSON_VALUE)
-    public WaybillDocument getWaybillDocument() {
-        return soapClient.getWaybillDocumentObject();
+    public WaybillDocument getWaybillDocument(
+            @RequestParam String invoiceNumber,
+            @RequestParam String invoiceDate
+    ) {
+        return soapClient.getWaybillDocumentObject(invoiceNumber, invoiceDate);
     }
 
     @GetMapping(value = "/api/xml/waybill-document", produces = MediaType.TEXT_XML_VALUE)
-    public String getWaybillDocumentXml() {
-        return soapClient.getWaybillDocument();
+    public String getWaybillDocumentXml(
+            @RequestParam String invoiceNumber,
+            @RequestParam String invoiceDate
+    ) {
+        return soapClient.getWaybillDocument(invoiceNumber, invoiceDate);
     }
 
     @GetMapping(value = "/import/waybill-document", produces = MediaType.TEXT_HTML_VALUE)

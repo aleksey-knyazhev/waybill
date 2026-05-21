@@ -5,7 +5,12 @@
            elementFormDefault="qualified">
 
     <xs:element name="getWaybillDocumentRequest">
-        <xs:complexType/>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="invoice_number" type="xs:string"/>
+                <xs:element name="invoice_date" type="xs:date"/>
+            </xs:sequence>
+        </xs:complexType>
     </xs:element>
 
     <xs:element name="getWaybillDocumentResponse">

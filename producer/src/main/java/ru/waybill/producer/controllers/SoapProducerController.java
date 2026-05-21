@@ -30,6 +30,8 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Set;
 
 @RestController
@@ -58,16 +60,18 @@ public class SoapProducerController {
             produces = MediaType.TEXT_XML_VALUE
     )
     public String getWaybillDocument(@RequestBody String requestBody) {
-        readRequest(requestBody);
-        WaybillDocument document = documentService.getDocument();
+        GetWaybillDocumentRequest request = readRequest(requestBody);
+        WaybillDocument document = documentService
+                .findDocument(required(request.getInvoiceNumber(), "invoice_number"), date(request.getInvoiceDate()))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "WaybillDocument not found"));
         validateDocument(document);
         return envelope(marshal(waybillSoapMapper.toResponse(document)));
     }
 
-    private void readRequest(String requestBody) {
+    private GetWaybillDocumentRequest readRequest(String requestBody) {
         try {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            unmarshaller.unmarshal(payload(requestBody));
+            return (GetWaybillDocumentRequest) unmarshaller.unmarshal(payload(requestBody));
         } catch (Exception exception) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid SOAP request", exception);
         }
@@ -141,5 +145,20 @@ public class SoapProducerController {
             return value;
         }
         return value.substring(1);
+    }
+
+    private String required(String value, String fieldName) {
+        if (value == null || value.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, fieldName + " is required");
+        }
+        return value.trim();
+    }
+
+    private LocalDate date(String value) {
+        try {
+            return LocalDate.parse(required(value, "invoice_date"));
+        } catch (DateTimeParseException exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invoice_date must use ISO format yyyy-MM-dd", exception);
+        }
     }
 }
