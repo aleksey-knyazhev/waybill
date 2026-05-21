@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.waybill.producer.mappers.WaybillDocumentMapper;
 import ru.waybill.producer.models.WaybillDocument;
-import ru.waybill.producer.models.Organization;
+import ru.waybill.producer.models.WaybillDocumentHeader;
 import ru.waybill.producer.repositories.WaybillDocumentRepository;
 
 import java.time.LocalDate;
@@ -50,18 +50,5 @@ public class WaybillDocumentService {
 
     private void updateDocument(WaybillDocument target, WaybillDocument source) {
         mapper.updateDocument(target, source);
-    }
-
-    public record WaybillDocumentHeader(
-            Long id,
-            String invoiceNumber,
-            LocalDate invoiceDate,
-            Integer status,
-            Organization seller,
-            Organization buyer,
-            String currencyName,
-            String currencyCode,
-            String transferBasis
-    ) {
     }
 }

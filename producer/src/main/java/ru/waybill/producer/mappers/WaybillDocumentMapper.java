@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import ru.waybill.producer.models.WaybillDocument;
-import ru.waybill.producer.services.WaybillDocumentService.WaybillDocumentHeader;
+import ru.waybill.producer.models.WaybillDocumentHeader;
 
 import java.util.List;
 
