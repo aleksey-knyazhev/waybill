@@ -19,10 +19,13 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.regex.Pattern;
 
 @Service
 public class SoapClient {
     private static final String SOAP_ENVELOPE_NAMESPACE = "http://schemas.xmlsoap.org/soap/envelope/";
+    private static final Pattern XSLT_VERSION_PATTERN = Pattern.compile("\\d{2}");
 
     private final WaybillPortType waybillPort;
     private final String envelopeTemplate;
@@ -80,10 +83,8 @@ public class SoapClient {
     }
 
     private String stylesheetHref(String xsltVersion) {
-        return switch (xsltVersion) {
-            case "02" -> "/xslt/waybill-document_version_02.xsl";
-            default -> "/xslt/waybill-document_version_01.xsl";
-        };
+        String version = XSLT_VERSION_PATTERN.matcher(xsltVersion).matches() ? xsltVersion : "01";
+        return "/xslt/waybill-document_version_" + version + ".xsl?v=" + Instant.now().toEpochMilli();
     }
 
     private String loadEnvelopeTemplate() throws IOException {
